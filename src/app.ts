@@ -4,7 +4,7 @@ import cors from 'cors'
 import log from './logger'
 import connect from './db/connect'
 //import routes from './routes'
-//import apiErrorHandler from './controllers/error.controller'
+import apiErrorHandler from './controllers/error.controller'
 
 const PORT = (config.get('PORT') || 3001) as number
 
@@ -19,5 +19,5 @@ app.listen(PORT, async () => {
   log.info(`Server is running at ${PORT}`)
   await connect()
   //routes(app)
-  //app.use(apiErrorHandler)
+  app.use(apiErrorHandler)
 })
