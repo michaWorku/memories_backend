@@ -1,7 +1,6 @@
 import * as express from 'express';
-import {Users} from '../controllers/users'
-import { signup, signin, getUser } from './controllers/user.controller'
-import requiresUser from './middleware/requiresUser'
+import { signup, signin, getUser } from '../controllers/user.controller'
+import requiresUser from '../middleware/requiresUser'
 const router = express.Router();
 
 // Auth routes

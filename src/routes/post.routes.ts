@@ -8,15 +8,13 @@ import {
   deleteMemory,
   addMemoryToCategory,
   removeMemoryFromCategory,
-} from './controllers/memory.controller'
+} from '../controllers/memory.controller'
 
-import requiresUser from './middleware/requiresUser'
-
-import app from '../app'
+import requiresUser from '../middleware/requiresUser'
 
 const router = express.Router();
 
-app.use(requiresUser)
+router.use(requiresUser)
 
 // Memories routes
 router.route('/').get(getMemories).post(createMemory)

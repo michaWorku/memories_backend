@@ -21,14 +21,13 @@ app.use(cors())
 app.listen(PORT, async () => {
   log.info(`Server is running at ${PORT}`)
   await connect()
-  routes(app)
-  
 })
 
 app.get('/api', (req: Request, res: Response) =>
  res.send('Welcome to memories-app')
 )
 app.use('/api/users', userRouter)
+app.use('/api/memories', memroryRouter)
 app.use(apiErrorHandler)
 
 export default app
