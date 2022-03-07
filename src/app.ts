@@ -7,6 +7,7 @@ import connect from './db/connect'
 //import routes from './routes'
 import apiErrorHandler from './controllers/error.controller'
 import userRouter from './routes/user.routes'
+import memroryRouter from './routes/post.routes'
 
 const PORT = (config.get('PORT') || 3001) as number
 
@@ -29,3 +30,5 @@ app.get('/api', (req: Request, res: Response) =>
 )
 app.use('/api/users', userRouter)
 app.use(apiErrorHandler)
+
+export default app
