@@ -4,10 +4,11 @@ import config from 'config'
 import cors from 'cors'
 import log from './logger'
 import connect from './db/connect'
-//import routes from './routes'
+
 import apiErrorHandler from './controllers/error.controller'
+
 import userRouter from './routes/user.routes'
-import memroryRouter from './routes/post.routes'
+import memoryRouter from './routes/post.routes'
 
 const PORT = (config.get('PORT') || 3001) as number
 
@@ -27,7 +28,7 @@ app.get('/api', (req: Request, res: Response) =>
  res.send('Welcome to memories-app')
 )
 app.use('/api/users', userRouter)
-app.use('/api/memories', memroryRouter)
+app.use('/api/memories', memoryRouter)
 app.use(apiErrorHandler)
 
 export default app

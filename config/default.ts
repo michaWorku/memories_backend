@@ -4,6 +4,7 @@ dotenv.config()
 
 export default {
   PORT: process.env.PORT,
+  LOCAL_DB_URI: process.env.MONGO_LOCAL,
   DB_URI: process.env.MONGODB_URI,
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRES: process.env.JWT_EXPIRES
