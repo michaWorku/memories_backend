@@ -20,7 +20,7 @@ const signAndSendToken = (res: Response, statusCode: number, user: UserDoc) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      memoriesNumber: user.memoriesNumber,
+      memories: user.memories,
     },
   })
 }
@@ -49,6 +49,8 @@ export const signup = catchAsync(
       password,
       confirmPassword,
     })
+
+    console.log({user})
 
     signAndSendToken(res, 200, user)
   }
@@ -83,6 +85,8 @@ export const getUser = catchAsync(
 
     let user = await User.findOne({ _id: req.params.id })
 
+    console.log({user})
+
     if (!user) {
       return next(new ApiError('User not found', 404))
     }
@@ -92,7 +96,7 @@ export const getUser = catchAsync(
 )
 
 //@desc Get user data
-//@route POST /api/users/me
+//@route GET /api/users/me
 //@access private
 export const getMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

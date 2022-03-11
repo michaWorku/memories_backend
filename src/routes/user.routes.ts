@@ -9,7 +9,7 @@ router.post('/signup', signup);
 
 // User routes
 router.use(protect)
-router.get('/users/:id', getUser)
+router.get('/:id', getUser)
 router.get('/me', getMe)
 
 
