@@ -8,7 +8,9 @@ import connect from './db/connect'
 import apiErrorHandler from './controllers/error.controller'
 
 import userRouter from './routes/user.routes'
-import memoryRouter from './routes/post.routes'
+import memoryRouter from './routes/memory.routes'
+import favoriteRouter from './routes/favorite.routes'
+import categoryRouter from './routes/category.routes'
 
 const PORT = (config.get('PORT') || 3001) as number
 
@@ -27,8 +29,11 @@ app.listen(PORT, async () => {
 app.get('/api', (req: Request, res: Response) =>
  res.send('Welcome to memories-app')
 )
+
 app.use('/api/users', userRouter)
 app.use('/api/memories', memoryRouter)
+app.use('/api/favorites', favoriteRouter)
+app.use('/api/categories', categoryRouter)
 
 app.use(apiErrorHandler)
 
