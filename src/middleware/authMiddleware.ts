@@ -25,9 +25,9 @@ const protect = catchAsync(async (
         if(!decoded){
           return next( new ApiError('Not authorized, Invalid token', 401))
         }
-
+        
         // @ts-ignore
-        req.user = await User.findById(decoded?.id).select('-password -confirmPassword')
+        req.user = await User.findById(decoded?.user?._id).select('-password -confirmPassword')
 
         next()
         

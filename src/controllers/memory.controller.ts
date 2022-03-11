@@ -1,34 +1,42 @@
 import { NextFunction, Request, Response } from 'express'
+import { memoryUsage } from 'process'
 import Category from '../models/category.model'
 import Memory, { MemoryDoc } from '../models/memory.model'
 import User from '../models/user.model'
 import ApiError from '../utils/apiError'
 import catchAsync from '../utils/catchAsync'
 
-const sendMemory = (res: Response, statusCode: number, memory: MemoryDoc) =>
+export const sendMemory = (res: Response, statusCode: number, memory: MemoryDoc) =>
   res.status(statusCode).json({ status: 'success', memory })
 
+//@desc create new memory
+//@route POST /api/memories
+//@access private 
 export const createMemory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const memory = await Memory.create(req.body)
+    // @ts-ignore
+    const memory = await Memory.create({...req.body, user: req.user._id})
 
     if (!memory) {
       return next(new ApiError('Bad request', 400))
     }
 
     // @ts-ignore
-    await User.findByIdAndUpdate(req.user, { $inc: { memoriesNumber: 1 } })
+    await User.findByIdAndUpdate(req.user._id, { $push: { memories: memory._id} })
 
     sendMemory(res, 201, memory)
   }
 )
 
+//@desc Add memory to a category
+//@route POST /api/memories/:memoryId/:categoryId
+//@access private 
 export const addMemoryToCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const category = await Category.findOne({ _id: req.body._id }).populate(
+    const category = await Category.findOne({ _id: req.params.categoryId }).populate(
       'memories'
     )
-    const memory = await Memory.findOne({ _id: req.params.id })
+    const memory = await Memory.findOne({ _id: req.params.memoryId })
 
     if (!category || !memory) {
       return next(new ApiError('Category or memory not found', 404))
@@ -44,6 +52,9 @@ export const addMemoryToCategory = catchAsync(
   }
 )
 
+//@desc Remove memory to a category
+//@route DELETE /api/memories/:memoryId/:categoryId
+//@access private 
 export const removeMemoryFromCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const memory = await Memory.findOne({ _id: req.params.memoryId })
@@ -63,6 +74,9 @@ export const removeMemoryFromCategory = catchAsync(
   }
 )
 
+//@desc Get all memories
+//@route GET /api/memories/
+//@access private 
 export const getMemories = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let category = req.query.category || 'all'
@@ -80,7 +94,7 @@ export const getMemories = catchAsync(
     if (req.query.category && req.query.category !== 'all') {
       userCategory = await Category.findOne({
         // @ts-ignore
-        user: req.user,
+        user: req.user._id,
         // @ts-ignore
         name: category,
       }).populate('memories')
@@ -118,6 +132,9 @@ export const getMemories = catchAsync(
   }
 )
 
+//@desc Get a memory
+//@route GET /api/memories/:id
+//@access private 
 export const getMemory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const memory = await Memory.findOne({ _id: req.params.id })
@@ -130,6 +147,9 @@ export const getMemory = catchAsync(
   }
 )
 
+//@desc Update a memory
+//@route PATCH /api/memories/:id
+//@access private 
 export const updateMemory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const memory = await Memory.findByIdAndUpdate(req.params.id, req.body, {
@@ -144,6 +164,9 @@ export const updateMemory = catchAsync(
   }
 )
 
+//@desc update a memory
+//@route PATCH /api/memories/:id
+//@access private 
 export const deleteMemory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     if (!(await Memory.findByIdAndRemove(req.params.id))) {
@@ -154,7 +177,7 @@ export const deleteMemory = catchAsync(
     await User.findByIdAndUpdate(
       // @ts-ignore
       req.user,
-      { $pull: { favorites: req.params.id }, $inc: { memoriesNumber: -1 } }
+      { $pull: { favorites: req.params.id , memories: req.params.id} }
     )
 
     res.status(204).json({
@@ -163,57 +186,4 @@ export const deleteMemory = catchAsync(
   }
 )
 
-export const getFavoriteMemories = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // @ts-ignore
-    const user = await User.findOne({ _id: req.user }).populate('favorites')
 
-    if (!user) {
-      return next(new ApiError('User not found', 404))
-    }
-
-    res.status(200).json({
-      status: 'success',
-      favorites: user?.favorites,
-    })
-  }
-)
-
-export const addMemoryToFavorites = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const memory = await Memory.findOne({ _id: req.body.id })
-
-    if (!memory) {
-      return next(new ApiError('Memory not found', 404))
-    }
-
-    await User.findByIdAndUpdate(
-      // @ts-ignore
-      req.user,
-      { $addToSet: { favorites: memory } }
-    )
-
-    sendMemory(res, 200, memory)
-  }
-)
-
-export const removeMemoryFromFavorites = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // @ts-ignore
-    const memory = await Memory.findOne({ _id: req.params.id })
-
-    if (!memory) {
-      return next(new ApiError('Memory not found', 404))
-    }
-
-    await User.findByIdAndUpdate(
-      // @ts-ignore
-      req.user,
-      { $pull: { favorites: memory._id } }
-    )
-
-    res.status(204).json({
-      status: 'success',
-    })
-  }
-)
