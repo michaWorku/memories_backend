@@ -8,7 +8,7 @@ export interface UserDoc extends mongoose.Document {
   email: string
   password: string
   confirmPassword: string
-  memoriesNumber: number
+  memories: []
   favorites: []
   categories: []
 }
@@ -44,10 +44,14 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    memoriesNumber: {
-      type: Number,
-      default: 0,
-    },
+    memories: [
+      {
+      // @ts-ignore
+      type: mongoose.Schema.ObjectId,
+      ref: 'Memory',
+      default: [],
+      }
+    ],
     favorites: [
       {
         // @ts-ignore
