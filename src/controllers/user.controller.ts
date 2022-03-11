@@ -84,9 +84,7 @@ export const getUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
 
     let user = await User.findOne({ _id: req.params.id })
-
-    console.log({user})
-
+  
     if (!user) {
       return next(new ApiError('User not found', 404))
     }
@@ -101,5 +99,5 @@ export const getUser = catchAsync(
 export const getMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore
-    res.status(200).json(req.user)
+    res.status(200).json({status: 'success', user: req.user})
 })

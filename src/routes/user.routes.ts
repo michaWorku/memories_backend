@@ -9,8 +9,10 @@ router.post('/signup', signup);
 
 // User routes
 router.use(protect)
-router.get('/:id', getUser)
+
 router.get('/me', getMe)
+router.get('/:id', getUser)
+
 
 
 export default router;
