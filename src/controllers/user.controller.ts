@@ -6,6 +6,7 @@ import User, { UserDoc } from '../models/user.model'
 import ApiError from '../utils/apiError'
 import catchAsync from '../utils/catchAsync'
 
+// Generate and send token
 const signAndSendToken = (res: Response, statusCode: number, user: UserDoc) => {
   const token = jwt.sign({ user }, config.get('JWT_SECRET'), {
     expiresIn: config.get('JWT_EXPIRES'),
@@ -24,6 +25,9 @@ const signAndSendToken = (res: Response, statusCode: number, user: UserDoc) => {
   })
 }
 
+//@desc Register new user
+//@route POST /api/users/signup
+//@access public
 export const signup = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email, password, confirmPassword } = req.body
@@ -50,6 +54,9 @@ export const signup = catchAsync(
   }
 )
 
+//@desc Authenticate a user
+//@route POST /api/users/signin
+//@access public
 export const signin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body
@@ -68,6 +75,9 @@ export const signin = catchAsync(
   }
 )
 
+//@desc Get user data
+//@route POST /api/users/:id
+//@access private
 export const getUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let user = await User.findOne({ _id: req.params.id })

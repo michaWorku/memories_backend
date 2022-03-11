@@ -43,11 +43,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      // validate: {
-      //   validator: function(confirmPassword: string): boolean {
-      //     return confirmPassword === this.password
-      //   }
-      // }
     },
     memoriesNumber: {
       type: Number,

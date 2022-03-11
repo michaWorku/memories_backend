@@ -29,6 +29,8 @@ app.get('/api', (req: Request, res: Response) =>
 )
 app.use('/api/users', userRouter)
 app.use('/api/memories', memoryRouter)
+
 app.use(apiErrorHandler)
+
 
 export default app
