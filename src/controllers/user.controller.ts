@@ -80,6 +80,7 @@ export const signin = catchAsync(
 //@access private
 export const getUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+
     let user = await User.findOne({ _id: req.params.id })
 
     if (!user) {
@@ -89,3 +90,12 @@ export const getUser = catchAsync(
     signAndSendToken(res, 200, user)
   }
 )
+
+//@desc Get user data
+//@route POST /api/users/me
+//@access private
+export const getMe = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // @ts-ignore
+    res.status(200).json(req.user)
+})
